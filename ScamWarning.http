@@ -1,0 +1,6 @@
+@ScamWarning_HostAddress = http://localhost:5101
+
+GET {{ScamWarning_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
