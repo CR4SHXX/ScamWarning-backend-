@@ -4,9 +4,8 @@ using ScamWarning.Interfaces;
 
 namespace ScamWarning.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    public class AuthController : BaseApiController
     {
         private readonly IUserService _userService;
 

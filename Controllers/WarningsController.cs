@@ -2,13 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ScamWarning.DTOs;
 using ScamWarning.Interfaces;
-using System.Security.Claims;
 
 namespace ScamWarning.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    public class WarningsController : ControllerBase
+    public class WarningsController : BaseApiController
     {
         private readonly IWarningService _warningService;
 
@@ -58,11 +56,10 @@ namespace ScamWarning.Controllers
         [Authorize]
         public async Task<IActionResult> GetPending()
         {
-            // Check if user is admin
-            var isAdmin = User.FindFirst("isAdmin")?.Value == "True";
-            if (!isAdmin)
+            var forbidResult = ForbidIfNotAdmin();
+            if (forbidResult != null)
             {
-                return Forbid();
+                return forbidResult;
             }
 
             var warnings = await _warningService.GetPendingAsync();
@@ -78,15 +75,13 @@ namespace ScamWarning.Controllers
         {
             try
             {
-                // Get user ID from JWT token
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
-                {
-                    return Unauthorized(new { error = "Invalid token" });
-                }
-
+                var userId = GetCurrentUserId();
                 var warning = await _warningService.CreateAsync(dto, userId);
                 return CreatedAtAction(nameof(GetById), new { id = warning.Id }, warning);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { error = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
@@ -101,11 +96,10 @@ namespace ScamWarning.Controllers
         [Authorize]
         public async Task<IActionResult> Approve(int id)
         {
-            // Check if user is admin
-            var isAdmin = User.FindFirst("isAdmin")?.Value == "True";
-            if (!isAdmin)
+            var forbidResult = ForbidIfNotAdmin();
+            if (forbidResult != null)
             {
-                return Forbid();
+                return forbidResult;
             }
 
             try
@@ -126,11 +120,10 @@ namespace ScamWarning.Controllers
         [Authorize]
         public async Task<IActionResult> Reject(int id)
         {
-            // Check if user is admin
-            var isAdmin = User.FindFirst("isAdmin")?.Value == "True";
-            if (!isAdmin)
+            var forbidResult = ForbidIfNotAdmin();
+            if (forbidResult != null)
             {
-                return Forbid();
+                return forbidResult;
             }
 
             try

@@ -2,13 +2,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ScamWarning.DTOs;
 using ScamWarning.Interfaces;
-using System.Security.Claims;
 
 namespace ScamWarning.Controllers
 {
-    [ApiController]
     [Route("api/warnings/{warningId}/comments")]
-    public class CommentsController : ControllerBase
+    public class CommentsController : BaseApiController
     {
         private readonly ICommentService _commentService;
 
@@ -36,15 +34,13 @@ namespace ScamWarning.Controllers
         {
             try
             {
-                // Get user ID from JWT token
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
-                {
-                    return Unauthorized(new { error = "Invalid token" });
-                }
-
+                var userId = GetCurrentUserId();
                 var comment = await _commentService.AddAsync(dto, userId, warningId);
                 return CreatedAtAction(nameof(GetByWarningId), new { warningId }, comment);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { error = ex.Message });
             }
             catch (KeyNotFoundException ex)
             {
