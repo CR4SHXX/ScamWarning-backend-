@@ -28,11 +28,11 @@ namespace ScamWarning.Controllers
         }
 
         /// <summary>
-        /// Returns a Forbid result if the current user is not an admin
+        /// Returns a Forbid result if the current user is not an admin, null otherwise
         /// </summary>
-        protected IActionResult ForbidIfNotAdmin()
+        protected IActionResult? ForbidIfNotAdmin()
         {
-            return !IsAdmin() ? Forbid() : null!;
+            return !IsAdmin() ? Forbid() : null;
         }
     }
 }
