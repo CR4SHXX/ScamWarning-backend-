@@ -56,6 +56,15 @@ public class WarningRepository : IWarningRepository
     {
         await _context.Warnings.AddAsync(warning);
         await _context.SaveChangesAsync();
+        
+        // Load the navigation properties after saving
+        await _context.Entry(warning).Reference(w => w.Author).LoadAsync();
+        await _context.Entry(warning).Reference(w => w.Category).LoadAsync();
+        
+        if (warning.Author == null || warning.Category == null)
+        {
+            throw new InvalidOperationException("Failed to load navigation properties for the warning.");
+        }
     }
 
     public async Task UpdateAsync(Warning warning)
