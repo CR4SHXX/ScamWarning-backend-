@@ -55,9 +55,8 @@ namespace ScamWarning.Services
 
             await _warningRepository.AddAsync(warning);
 
-            // Fetch the created warning with details to return DTO
-            var createdWarning = await _warningRepository.GetByIdWithDetailsAsync(warning.Id);
-            return MapToDto(createdWarning!);
+            // Navigation properties are now loaded by AddAsync, so we can map directly
+            return MapToDto(warning);
         }
 
         public async Task<WarningDto> ApproveAsync(int warningId)
