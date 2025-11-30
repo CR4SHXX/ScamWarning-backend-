@@ -56,15 +56,8 @@ namespace ScamWarning.Services
 
         public bool ValidatePasswordStrength(string password)
         {
-            if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
-                return false;
-
-            // Check for at least one uppercase, one lowercase, and one digit
-            bool hasUpper = password.Any(char.IsUpper);
-            bool hasLower = password.Any(char.IsLower);
-            bool hasDigit = password.Any(char.IsDigit);
-
-            return hasUpper && hasLower && hasDigit;
+            // Only require minimum 8 characters
+            return !string.IsNullOrWhiteSpace(password) && password.Length >= 8;
         }
     }
 }

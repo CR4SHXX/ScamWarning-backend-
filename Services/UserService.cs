@@ -27,7 +27,7 @@ namespace ScamWarning.Services
             // Validate password strength
             if (!_authService.ValidatePasswordStrength(registerDto.Password))
             {
-                throw new InvalidOperationException("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit");
+                throw new InvalidOperationException("Password must be at least 8 characters long");
             }
 
             // Create new user
