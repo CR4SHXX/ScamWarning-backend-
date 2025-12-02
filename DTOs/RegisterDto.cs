@@ -13,6 +13,6 @@ public class RegisterDto
     public string Email { get; set; } = null!;
 
     [Required(ErrorMessage = "Password is required")]
-    [MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
+    [MinLength(3, ErrorMessage = "Password must be at least 3 characters long")]
     public string Password { get; set; } = null!;
 }

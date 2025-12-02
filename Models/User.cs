@@ -3,14 +3,14 @@
     public class User
     {
         public int Id { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string Username { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string Password { get; set; } = null!;
         public bool IsAdmin { get; set; }
         public DateTime CreatedAt { get; set; }
 
         // Navigation properties
-        public ICollection<Warning> Warnings { get; set; }
-        public ICollection<Comment> Comments { get; set; }
+        public ICollection<Warning> Warnings { get; set; } = null!;
+        public ICollection<Comment> Comments { get; set; } = null!;
     }
 }

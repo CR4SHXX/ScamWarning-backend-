@@ -22,4 +22,8 @@ public class CreateWarningDto
     [Required(ErrorMessage = "Category ID is required")]
     [Range(1, int.MaxValue, ErrorMessage = "Category ID must be a positive number")]
     public int CategoryId { get; set; }
+
+    [Required(ErrorMessage = "User ID is required")]
+    [Range(1, int.MaxValue, ErrorMessage = "User ID must be a positive number")]
+    public int UserId { get; set; }
 }

@@ -26,8 +26,6 @@ namespace ScamWarning.Data
                 entity.Property(u => u.Username).IsRequired().HasMaxLength(50);
                 entity.Property(u => u.Email).IsRequired().HasMaxLength(100);
                 entity.Property(u => u.Password).IsRequired().HasMaxLength(255);
-                entity.Property(u => u.IsAdmin).HasDefaultValue(false);
-                entity.Property(u => u.CreatedAt).HasDefaultValueSql("GETDATE()");
             });
 
             // Category Configuration
@@ -46,8 +44,7 @@ namespace ScamWarning.Data
                 entity.Property(w => w.Description).IsRequired();
                 entity.Property(w => w.WarningSigns).IsRequired();
                 entity.Property(w => w.ImageUrl).HasMaxLength(500);
-                entity.Property(w => w.Status).IsRequired().HasMaxLength(20).HasDefaultValue("Pending");
-                entity.Property(w => w.CreatedAt).HasDefaultValueSql("GETDATE()");
+                entity.Property(w => w.Status).IsRequired().HasMaxLength(20);
 
                 // Relationships
                 entity.HasOne(w => w.Author)
@@ -66,7 +63,6 @@ namespace ScamWarning.Data
             {
                 entity.HasKey(c => c.Id);
                 entity.Property(c => c.Text).IsRequired().HasMaxLength(1000);
-                entity.Property(c => c.CreatedAt).HasDefaultValueSql("GETDATE()");
 
                 // Relationships
                 entity.HasOne(c => c.Warning)
@@ -80,14 +76,7 @@ namespace ScamWarning.Data
                     .OnDelete(DeleteBehavior.NoAction);
             });
 
-            // Seed Categories
-            modelBuilder.Entity<Category>().HasData(
-                new Category { Id = 1, Name = "Phishing", Description = "Email and website scams that steal personal information" },
-                new Category { Id = 2, Name = "Phone Scam", Description = "Fraudulent phone calls and SMS messages" },
-                new Category { Id = 3, Name = "Investment Scam", Description = "Fake investment opportunities and Ponzi schemes" },
-                new Category { Id = 4, Name = "Romance Scam", Description = "Online dating and romance fraud" },
-                new Category { Id = 5, Name = "Other", Description = "Other types of scams" }
-            );
+            // Seed data is now handled in Program.cs for InMemory database
         }
     }
 }

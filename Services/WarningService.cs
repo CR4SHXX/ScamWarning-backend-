@@ -49,7 +49,7 @@ namespace ScamWarning.Services
                 ImageUrl = dto.ImageUrl,
                 AuthorId = authorId,
                 CategoryId = dto.CategoryId,
-                Status = "Pending",
+                Status = "Approved", // Auto-approve for demo
                 CreatedAt = DateTime.UtcNow
             };
 

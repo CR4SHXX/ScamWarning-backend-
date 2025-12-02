@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ScamWarning.DTOs;
 using ScamWarning.Interfaces;
@@ -26,21 +25,15 @@ namespace ScamWarning.Controllers
         }
 
         /// <summary>
-        /// Add a comment to a warning (authenticated users only)
+        /// Add a comment to a warning (public for demo)
         /// </summary>
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Add(int warningId, [FromBody] CreateCommentDto dto)
         {
             try
             {
-                var userId = GetCurrentUserId();
-                var comment = await _commentService.AddAsync(dto, userId, warningId);
+                var comment = await _commentService.AddAsync(dto, dto.UserId, warningId);
                 return CreatedAtAction(nameof(GetByWarningId), new { warningId }, comment);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(new { error = ex.Message });
             }
             catch (KeyNotFoundException ex)
             {

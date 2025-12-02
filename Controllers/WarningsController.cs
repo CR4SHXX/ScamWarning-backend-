@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ScamWarning.DTOs;
 using ScamWarning.Interfaces;
@@ -50,38 +49,25 @@ namespace ScamWarning.Controllers
         }
 
         /// <summary>
-        /// Get all pending warnings (admin only)
+        /// Get all pending warnings (public for demo)
         /// </summary>
         [HttpGet("pending")]
-        [Authorize]
         public async Task<IActionResult> GetPending()
         {
-            var forbidResult = ForbidIfNotAdmin();
-            if (forbidResult != null)
-            {
-                return forbidResult;
-            }
-
             var warnings = await _warningService.GetPendingAsync();
             return Ok(warnings);
         }
 
         /// <summary>
-        /// Create a new warning (authenticated users only)
+        /// Create a new warning (public for demo)
         /// </summary>
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Create([FromBody] CreateWarningDto dto)
         {
             try
             {
-                var userId = GetCurrentUserId();
-                var warning = await _warningService.CreateAsync(dto, userId);
+                var warning = await _warningService.CreateAsync(dto, dto.UserId);
                 return CreatedAtAction(nameof(GetById), new { id = warning.Id }, warning);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(new { error = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
@@ -90,18 +76,11 @@ namespace ScamWarning.Controllers
         }
 
         /// <summary>
-        /// Approve a pending warning (admin only)
+        /// Approve a pending warning (public for demo)
         /// </summary>
         [HttpPut("{id}/approve")]
-        [Authorize]
         public async Task<IActionResult> Approve(int id)
         {
-            var forbidResult = ForbidIfNotAdmin();
-            if (forbidResult != null)
-            {
-                return forbidResult;
-            }
-
             try
             {
                 var warning = await _warningService.ApproveAsync(id);
@@ -114,18 +93,11 @@ namespace ScamWarning.Controllers
         }
 
         /// <summary>
-        /// Reject a pending warning (admin only)
+        /// Reject a pending warning (public for demo)
         /// </summary>
         [HttpPut("{id}/reject")]
-        [Authorize]
         public async Task<IActionResult> Reject(int id)
         {
-            var forbidResult = ForbidIfNotAdmin();
-            if (forbidResult != null)
-            {
-                return forbidResult;
-            }
-
             try
             {
                 var warning = await _warningService.RejectAsync(id);
