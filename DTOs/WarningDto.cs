@@ -13,4 +13,5 @@ public class WarningDto
     public DateTime CreatedAt { get; set; }
     public string AuthorUsername { get; set; } = null!;
     public string CategoryName { get; set; } = null!;
+    public string CategoryEmoji { get; set; } = "⚠️";
 }

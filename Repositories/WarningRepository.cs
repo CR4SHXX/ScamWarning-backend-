@@ -27,6 +27,17 @@ public class WarningRepository : IWarningRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Warning>> GetAllAsync()
+    {
+        return await _context.Warnings
+            .Include(w => w.Author)
+            .Include(w => w.Category)
+            .Include(w => w.Comments!)
+                .ThenInclude(c => c.User)
+            .OrderByDescending(w => w.CreatedAt)
+            .ToListAsync();
+    }
+
     public async Task<Warning?> GetByIdWithDetailsAsync(int id)
     {
         var warning = await _context.Warnings
@@ -71,5 +82,23 @@ public class WarningRepository : IWarningRepository
     {
         _context.Warnings.Update(warning);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var warning = await _context.Warnings
+            .Include(w => w.Comments)
+            .FirstOrDefaultAsync(w => w.Id == id);
+        
+        if (warning != null)
+        {
+            // Delete associated comments first
+            if (warning.Comments != null && warning.Comments.Any())
+            {
+                _context.Comments.RemoveRange(warning.Comments);
+            }
+            _context.Warnings.Remove(warning);
+            await _context.SaveChangesAsync();
+        }
     }
 }

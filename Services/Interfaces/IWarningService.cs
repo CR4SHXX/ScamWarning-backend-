@@ -60,5 +60,27 @@ namespace ScamWarning.Interfaces
         Task<IEnumerable<WarningDto>> SearchAndFilterAsync(
             string? searchTerm = null,
             int? categoryId = null);
+
+        /// <summary>
+        /// Gets all warnings regardless of status (admin only)
+        /// </summary>
+        /// <returns>List of all warnings</returns>
+        Task<IEnumerable<WarningDto>> GetAllAsync();
+
+        /// <summary>
+        /// Deletes a warning (admin only)
+        /// </summary>
+        /// <param name="warningId">Warning ID to delete</param>
+        /// <exception cref="KeyNotFoundException">Thrown when warning not found</exception>
+        Task DeleteAsync(int warningId);
+
+        /// <summary>
+        /// Updates a warning (admin only)
+        /// </summary>
+        /// <param name="warningId">Warning ID to update</param>
+        /// <param name="dto">Updated warning data</param>
+        /// <returns>Updated warning DTO</returns>
+        /// <exception cref="KeyNotFoundException">Thrown when warning not found</exception>
+        Task<WarningDto> UpdateAsync(int warningId, UpdateWarningDto dto);
     }
 }

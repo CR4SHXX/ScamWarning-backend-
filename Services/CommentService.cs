@@ -64,5 +64,16 @@ namespace ScamWarning.Services
                 Username = createdComment.User.Username
             };
         }
+
+        public async Task DeleteAsync(int commentId)
+        {
+            var comment = await _commentRepository.GetByIdAsync(commentId);
+            if (comment == null)
+            {
+                throw new KeyNotFoundException($"Comment with id {commentId} not found");
+            }
+
+            await _commentRepository.DeleteAsync(commentId);
+        }
     }
 }

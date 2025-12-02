@@ -10,6 +10,11 @@ public interface IWarningRepository
     Task<IEnumerable<Warning>> GetAllApprovedAsync();
 
     /// <summary>
+    /// Get all warnings regardless of status (for admin)
+    /// </summary>
+    Task<IEnumerable<Warning>> GetAllAsync();
+
+    /// <summary>
     /// Get one warning with Author, Category, and all Comments (for details page)
     /// </summary>
     Task<Warning?> GetByIdWithDetailsAsync(int id);
@@ -28,4 +33,9 @@ public interface IWarningRepository
     /// Update warning (for approve/reject status change)
     /// </summary>
     Task UpdateAsync(Warning warning);
+
+    /// <summary>
+    /// Delete a warning (admin only)
+    /// </summary>
+    Task DeleteAsync(int id);
 }

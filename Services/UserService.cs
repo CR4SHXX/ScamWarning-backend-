@@ -73,5 +73,11 @@ namespace ScamWarning.Services
             var user = await _userRepository.GetByEmailAsync(email);
             return user != null;
         }
+
+        public async Task<bool> IsAdminAsync(int userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            return user?.IsAdmin ?? false;
+        }
     }
 }

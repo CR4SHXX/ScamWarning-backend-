@@ -21,6 +21,12 @@ namespace ScamWarning.Services
             return warnings.Select(MapToDto);
         }
 
+        public async Task<IEnumerable<WarningDto>> GetAllAsync()
+        {
+            var warnings = await _warningRepository.GetAllAsync();
+            return warnings.Select(MapToDto);
+        }
+
         public async Task<WarningDto?> GetByIdAsync(int id)
         {
             var warning = await _warningRepository.GetByIdWithDetailsAsync(id);
@@ -49,7 +55,7 @@ namespace ScamWarning.Services
                 ImageUrl = dto.ImageUrl,
                 AuthorId = authorId,
                 CategoryId = dto.CategoryId,
-                Status = "Approved", // Auto-approve for demo
+                Status = "Pending", // New warnings need admin approval
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -82,6 +88,43 @@ namespace ScamWarning.Services
             }
 
             warning.Status = "Rejected";
+            await _warningRepository.UpdateAsync(warning);
+
+            return MapToDto(warning);
+        }
+
+        public async Task DeleteAsync(int warningId)
+        {
+            var warning = await _warningRepository.GetByIdWithDetailsAsync(warningId);
+            if (warning == null)
+            {
+                throw new KeyNotFoundException($"Warning with id {warningId} not found");
+            }
+
+            await _warningRepository.DeleteAsync(warningId);
+        }
+
+        public async Task<WarningDto> UpdateAsync(int warningId, UpdateWarningDto dto)
+        {
+            var warning = await _warningRepository.GetByIdWithDetailsAsync(warningId);
+            if (warning == null)
+            {
+                throw new KeyNotFoundException($"Warning with id {warningId} not found");
+            }
+
+            // Validate category exists
+            if (!await _categoryService.CategoryExistsAsync(dto.CategoryId))
+            {
+                throw new InvalidOperationException($"Category with id {dto.CategoryId} does not exist");
+            }
+
+            warning.Title = dto.Title;
+            warning.Description = dto.Description;
+            warning.WarningSigns = dto.WarningSigns;
+            warning.ImageUrl = dto.ImageUrl;
+            warning.CategoryId = dto.CategoryId;
+            warning.Status = dto.Status;
+
             await _warningRepository.UpdateAsync(warning);
 
             return MapToDto(warning);
@@ -120,7 +163,8 @@ namespace ScamWarning.Services
                 Status = warning.Status,
                 CreatedAt = warning.CreatedAt,
                 AuthorUsername = warning.Author.Username,
-                CategoryName = warning.Category.Name
+                CategoryName = warning.Category.Name,
+                CategoryEmoji = warning.Category.Emoji
             };
         }
     }

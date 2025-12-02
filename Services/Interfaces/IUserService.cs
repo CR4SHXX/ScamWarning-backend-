@@ -37,5 +37,12 @@ namespace ScamWarning.Interfaces
         /// <param name="email">Email address to check</param>
         /// <returns>True if email exists, false otherwise</returns>
         Task<bool> EmailExistsAsync(string email);
+
+        /// <summary>
+        /// Checks if a user is an admin
+        /// </summary>
+        /// <param name="userId">User ID to check</param>
+        /// <returns>True if user is admin, false otherwise</returns>
+        Task<bool> IsAdminAsync(int userId);
     }
 }

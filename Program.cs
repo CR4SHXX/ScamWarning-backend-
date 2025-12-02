@@ -62,26 +62,37 @@ using (var scope = app.Services.CreateScope())
     if (!context.Categories.Any())
     {
         context.Categories.AddRange(
-            new Category { Id = 1, Name = "Phishing", Description = "Email and website scams that steal personal information" },
-            new Category { Id = 2, Name = "Phone Scam", Description = "Fraudulent phone calls and SMS messages" },
-            new Category { Id = 3, Name = "Investment Scam", Description = "Fake investment opportunities and Ponzi schemes" },
-            new Category { Id = 4, Name = "Romance Scam", Description = "Online dating and romance fraud" },
-            new Category { Id = 5, Name = "Other", Description = "Other types of scams" }
+            new Category { Id = 1, Name = "Phishing", Emoji = "🎣", Description = "Email and website scams that steal personal information" },
+            new Category { Id = 2, Name = "Phone Scam", Emoji = "📞", Description = "Fraudulent phone calls and SMS messages" },
+            new Category { Id = 3, Name = "Investment Scam", Emoji = "💰", Description = "Fake investment opportunities and Ponzi schemes" },
+            new Category { Id = 4, Name = "Romance Scam", Emoji = "💔", Description = "Online dating and romance fraud" },
+            new Category { Id = 5, Name = "Other", Emoji = "⚠️", Description = "Other types of scams" }
         );
     }
     
-    // Seed a demo user
+    // Seed users
     if (!context.Users.Any())
     {
-        context.Users.Add(new User 
-        { 
-            Id = 1, 
-            Username = "demo", 
-            Email = "demo@test.com", 
-            Password = "demo123",
-            IsAdmin = true,
-            CreatedAt = DateTime.UtcNow
-        });
+        context.Users.AddRange(
+            new User 
+            { 
+                Id = 1, 
+                Username = "demo", 
+                Email = "demo@test.com", 
+                Password = "demo123",
+                IsAdmin = false,
+                CreatedAt = DateTime.UtcNow
+            },
+            new User 
+            { 
+                Id = 2, 
+                Username = "root", 
+                Email = "root@admin.com", 
+                Password = "dadababa",
+                IsAdmin = true,
+                CreatedAt = DateTime.UtcNow
+            }
+        );
     }
     
     // Seed sample warnings

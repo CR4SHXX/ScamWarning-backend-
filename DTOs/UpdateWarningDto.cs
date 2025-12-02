@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ScamWarning.DTOs;
 
-public class CreateWarningDto
+public class UpdateWarningDto
 {
     [Required(ErrorMessage = "Title is required")]
     [StringLength(200, MinimumLength = 5, ErrorMessage = "Title must be between 5 and 200 characters")]
@@ -23,7 +23,6 @@ public class CreateWarningDto
     [Range(1, int.MaxValue, ErrorMessage = "Category ID must be a positive number")]
     public int CategoryId { get; set; }
 
-    [Required(ErrorMessage = "User ID is required")]
-    [Range(1, int.MaxValue, ErrorMessage = "User ID must be a positive number")]
-    public int UserId { get; set; }
+    [Required(ErrorMessage = "Status is required")]
+    public string Status { get; set; } = null!;
 }
