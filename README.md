@@ -1,22 +1,21 @@
-# ScamWarning Backend API
+# ScamWarning Backend API (School Project Demo)
 
-A .NET 9 Web API backend for a scam warning platform where users can submit, view, and comment on scam warnings.
+A simplified .NET 9 Web API backend for a scam warning platform where users can submit, view, and comment on scam warnings. **This version is specifically simplified for a school project demo** - no external dependencies, no authentication complexity.
 
 ## Features
 
-- **User Authentication**: JWT-based authentication with secure password hashing (BCrypt)
+- **Simple User Authentication**: No JWT tokens - login returns user info directly
 - **Warning Management**: Create, approve/reject, and search scam warnings
+- **Auto-Approved Warnings**: All warnings are automatically approved for easy testing
 - **Comment System**: Add and retrieve comments on warnings
-- **Category Management**: Pre-defined scam categories (Phishing, Phone Scam, Investment Scam, Romance Scam, Other)
-- **Role-Based Access**: Admin users can approve/reject pending warnings
+- **Category Management**: Pre-seeded categories (Phishing, Phone Scam, Investment Scam, Romance Scam, Other)
+- **No External Dependencies**: Uses InMemory database - runs without SQL Server installation
 
 ## Technology Stack
 
 - .NET 9.0
-- Entity Framework Core 9.0
-- SQL Server (LocalDB for development)
-- JWT Bearer Authentication
-- BCrypt.Net for password hashing
+- Entity Framework Core 9.0 (InMemory Database)
+- Plain text password comparison (for demo only)
 - Swagger/OpenAPI for API documentation
 
 ## Project Structure
@@ -42,25 +41,24 @@ ScamWarning/
 ## Services
 
 ### AuthService
-- JWT token generation with 7-day expiration
-- BCrypt password hashing
-- Password strength validation (min 8 chars, uppercase, lowercase, digit)
+- Simple plain text password comparison (demo only - not for production)
+- Basic password validation (min 3 characters)
 
 ### UserService
 - User registration with email uniqueness validation
-- Login with JWT token generation
+- Login returns user info (id, username, email, isAdmin)
 - User retrieval by ID
 - Email existence checking
 
 ### WarningService
-- Create warnings (default status: Pending)
-- Approve/reject warnings (admin only)
+- Create warnings (automatically Approved for demo)
+- Approve/reject warnings (public for demo)
 - Get all approved warnings
-- Get pending warnings (admin only)
+- Get pending warnings (public for demo)
 - Search and filter warnings by term and category
 
 ### CommentService
-- Add comments to warnings
+- Add comments to warnings (no authentication required)
 - Get all comments for a warning
 
 ### CategoryService
@@ -70,8 +68,7 @@ ScamWarning/
 ## Setup Instructions
 
 ### Prerequisites
-- .NET 9 SDK
-- SQL Server or SQL Server LocalDB
+- .NET 9 SDK (download from https://dotnet.microsoft.com/download)
 
 ### Installation
 
@@ -81,51 +78,57 @@ git clone <repository-url>
 cd ScamWarning-backend-
 ```
 
-2. Update database connection string in `appsettings.json` if needed
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=ScamWarningDB;Trusted_Connection=True;TrustServerCertificate=True;"
-}
-```
-
-3. Apply database migrations
-```bash
-dotnet ef database update
-```
-
-4. Run the application
+2. Run the application
 ```bash
 dotnet run
 ```
 
-The API will be available at `https://localhost:5001` (or the port specified in launchSettings.json)
+That's it! The API will be available at `http://localhost:5000`
 
-## Configuration
-
-### JWT Settings (appsettings.json)
-
-**Important**: For production deployments, do NOT hardcode the JWT secret key in configuration files. Use environment variables or secure key management services (Azure Key Vault, AWS Secrets Manager, etc.).
-
-```json
-"JwtSettings": {
-  "SecretKey": "YourSuperSecretKeyForJWTTokenGeneration123456789",
-  "Issuer": "ScamWarningAPI",
-  "Audience": "ScamWarningClient"
-}
-```
-
-### Environment Variables (Production)
-
-Set these environment variables in production:
-- `JwtSettings__SecretKey`: Your secure JWT signing key
-- `JwtSettings__Issuer`: Your API issuer name
-- `JwtSettings__Audience`: Your client audience name
-- `ConnectionStrings__DefaultConnection`: Your production database connection string
+**No database setup required!** The app uses an InMemory database and automatically seeds sample data on startup.
 
 ## API Documentation
 
-When running in development mode, Swagger UI is available at:
-- `https://localhost:5001/swagger`
+Swagger UI is available at:
+- `http://localhost:5000/swagger`
+
+## Demo Credentials
+
+A demo user is automatically created on startup:
+- **Email**: demo@test.com
+- **Password**: demo123
+- **Is Admin**: true
+
+## Quick Test
+
+```bash
+# Get all categories
+curl http://localhost:5000/api/categories
+
+# Get all warnings
+curl http://localhost:5000/api/warnings
+
+# Login (returns user info, not token)
+curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "demo@test.com", "password": "demo123"}'
+
+# Create a new warning (auto-approved)
+curl -X POST http://localhost:5000/api/warnings \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Test Scam",
+    "description": "This is a test scam warning",
+    "warningSigns": "Watch out for these signs",
+    "categoryId": 1,
+    "userId": 1
+  }'
+
+# Add a comment
+curl -X POST http://localhost:5000/api/warnings/1/comments \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Great warning!", "userId": 1}'
+```
 
 ## Database Schema
 
@@ -143,32 +146,62 @@ When running in development mode, Swagger UI is available at:
 ### Comments
 - Id, Text, WarningId, UserId, CreatedAt
 
-## Security Features
+## Pre-Seeded Data
 
-- **Password Hashing**: BCrypt with automatic salt generation
-- **Password Validation**: Minimum 8 characters, requires uppercase, lowercase, and digit
-- **JWT Authentication**: Secure token-based authentication with 7-day expiration
-- **Input Validation**: DTOs with data annotations for request validation
-- **SQL Injection Protection**: Entity Framework parameterized queries
+On startup, the application automatically seeds:
 
-## Performance Considerations
+### Categories
+1. Phishing
+2. Phone Scam
+3. Investment Scam
+4. Romance Scam
+5. Other
 
-The current implementation loads data into memory for filtering. For production deployments with large datasets, consider:
+### Demo User
+- Username: demo
+- Email: demo@test.com
+- Password: demo123
+- Is Admin: true
 
-1. Implementing database-level filtering in repositories
-2. Adding pagination support
-3. Implementing caching for frequently accessed data
-4. Adding indexes on frequently queried columns
+### Sample Warnings
+1. "Fake Bank Email" - Phishing category
+2. "IRS Phone Call Scam" - Phone Scam category
 
-## Next Steps
+## Key Simplifications for Demo
 
-- Add API Controllers to expose the services
-- Implement authorization policies for admin-only endpoints
-- Add input validation attributes to DTOs
-- Implement unit tests for services
-- Add integration tests for API endpoints
-- Configure CORS for frontend integration
-- Set up logging and error handling middleware
+⚠️ **This version is for school project demos only. DO NOT use in production!**
+
+1. **No JWT Authentication**: Login returns user info directly, no tokens needed
+2. **Plain Text Passwords**: Passwords stored as plain text (demo only!)
+3. **InMemory Database**: No SQL Server required, data resets on restart
+4. **Auto-Approved Warnings**: All warnings automatically approved
+5. **No Authorization**: All endpoints are public for easy testing
+6. **Simplified Validation**: Minimal password requirements (3+ chars)
+
+## What's Different from Production Version
+
+This simplified version removes:
+- ❌ JWT Bearer Authentication
+- ❌ BCrypt password hashing
+- ❌ SQL Server dependency
+- ❌ Database migrations
+- ❌ [Authorize] attributes on controllers
+- ❌ Approval workflow for warnings
+- ❌ Admin-only endpoints
+
+## For Production Use
+
+To make this production-ready, you would need to:
+1. Add JWT authentication back
+2. Use BCrypt for password hashing
+3. Connect to a real database (SQL Server, PostgreSQL, etc.)
+4. Add proper authorization with [Authorize] attributes
+5. Implement approval workflow for warnings
+6. Add rate limiting and security headers
+7. Use strong password requirements
+8. Add input sanitization and validation
+9. Implement proper error handling and logging
+10. Add HTTPS enforcement
 
 ## License
 
