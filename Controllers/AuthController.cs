@@ -39,8 +39,14 @@ namespace ScamWarning.Controllers
         {
             try
             {
-                var token = await _userService.LoginAsync(loginDto);
-                return Ok(new { token });
+                var user = await _userService.LoginAsync(loginDto);
+                return Ok(new 
+                { 
+                    id = user.Id, 
+                    username = user.Username, 
+                    email = user.Email,
+                    isAdmin = user.IsAdmin
+                });
             }
             catch (UnauthorizedAccessException ex)
             {

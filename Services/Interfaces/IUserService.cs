@@ -17,12 +17,12 @@ namespace ScamWarning.Interfaces
         Task<User> RegisterAsync(RegisterDto registerDto);
 
         /// <summary>
-        /// Authenticates user and generates JWT token
+        /// Authenticates user and returns user info
         /// </summary>
         /// <param name="loginDto">Login credentials</param>
-        /// <returns>JWT token string</returns>
+        /// <returns>User entity</returns>
         /// <exception cref="UnauthorizedAccessException">Thrown when credentials are invalid</exception>
-        Task<string> LoginAsync(LoginDto loginDto);
+        Task<User> LoginAsync(LoginDto loginDto);
 
         /// <summary>
         /// Retrieves user by their unique identifier

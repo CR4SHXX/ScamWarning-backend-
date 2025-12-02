@@ -27,15 +27,15 @@ namespace ScamWarning.Services
             // Validate password strength
             if (!_authService.ValidatePasswordStrength(registerDto.Password))
             {
-                throw new InvalidOperationException("Password must be at least 8 characters long");
+                throw new InvalidOperationException("Password must be at least 3 characters long");
             }
 
-            // Create new user
+            // Create new user - plain text password for demo
             var user = new User
             {
                 Username = registerDto.Username,
                 Email = registerDto.Email,
-                Password = _authService.HashPassword(registerDto.Password),
+                Password = registerDto.Password, // Plain text for demo
                 IsAdmin = false,
                 CreatedAt = DateTime.UtcNow
             };
@@ -44,7 +44,7 @@ namespace ScamWarning.Services
             return user;
         }
 
-        public async Task<string> LoginAsync(LoginDto loginDto)
+        public async Task<User> LoginAsync(LoginDto loginDto)
         {
             // Find user by email
             var user = await _userRepository.GetByEmailAsync(loginDto.Email);
@@ -53,14 +53,14 @@ namespace ScamWarning.Services
                 throw new UnauthorizedAccessException("Invalid email or password");
             }
 
-            // Verify password
-            if (!_authService.VerifyPassword(loginDto.Password, user.Password))
+            // Verify password - simple string comparison for demo
+            if (user.Password != loginDto.Password)
             {
                 throw new UnauthorizedAccessException("Invalid email or password");
             }
 
-            // Generate JWT token
-            return _authService.GenerateJwtToken(user.Id, user.Email, user.IsAdmin);
+            // Return user info instead of JWT token
+            return user;
         }
 
         public async Task<User?> GetByIdAsync(int id)
