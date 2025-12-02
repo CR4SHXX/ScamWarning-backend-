@@ -22,9 +22,9 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Configure DbContext with InMemory Database
+// Configure DbContext with SQLite Database
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("ScamWarningDB"));
+    options.UseSqlite("Data Source=ScamWarning.db"));
 
 // Register Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -57,6 +57,9 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    
+    // Ensure database is created
+    context.Database.EnsureCreated();
     
     // Seed Categories
     if (!context.Categories.Any())
