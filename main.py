@@ -41,7 +41,8 @@ FONT_MONOSPACE = "Consolas"
 
 # AI Configuration
 AI_MODEL = "gemini-1.5-pro"
-HARDCODED_API_KEY = "AIzaSyCwuGyO1XiHdVHE-edpgydVu_FZHcJVdhk"
+# NOTE: API key should be set via GEMINI_API_KEY environment variable
+# or entered through the UI when the app starts
 
 # XP Values
 XP_FIRST_TRY = 100
@@ -501,8 +502,8 @@ class NmapDojoApp:
     
     def initialize_api(self) -> None:
         """Initialize the Google Gemini API."""
-        # Try environment variable first, then hardcoded key
-        self.api_key = os.getenv("GEMINI_API_KEY") or HARDCODED_API_KEY
+        # Try to get API key from environment variable
+        self.api_key = os.getenv("GEMINI_API_KEY")
         
         if self.api_key:
             if self.test_api_key():
