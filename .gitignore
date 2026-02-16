@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Nmap Dojo App files
+dojo_progress.json
+dojo.log
+.env
